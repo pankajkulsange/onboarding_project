@@ -79,6 +79,25 @@ Link: https://your-app-url.com/new-joiner
         alert("Welcome email sent!\n\nCheck console for details.");
     };
 
+    // Helper to calculate completion percentage
+const getCompletion = (statusObj: { [section: string]: { [item: string]: string } }) => {
+    let total = 0;
+    let completed = 0;
+    Object.values(statusObj).forEach(section =>
+        Object.values(section).forEach(status => {
+            total += 1;
+            if (status === "Completed") completed += 1;
+        })
+    );
+    return total === 0 ? 0 : Math.round((completed / total) * 100);
+};
+
+// Mock joiner list (expand as needed)
+const joiners = [
+    { id: "newJoiner1", name: "Alice QA" },
+    // Add more joiners here
+];
+
     return (
         <div className="container mx-auto p-4">
             <Navbar />
@@ -126,6 +145,83 @@ Link: https://your-app-url.com/new-joiner
                 >
                     {emailSent ? "Welcome Email Sent" : "Send Welcome Email"}
                 </button>
+            </div>
+            <div className="mt-12">
+                <h2 className="text-xl font-bold mb-4">New Joiner Progress</h2>
+                <div className="space-y-6">
+                    {joiners.map((joiner) => {
+                        const statusRaw = localStorage.getItem(`joinerStatus-${joiner.id}`);
+                        const statusObj = statusRaw ? JSON.parse(statusRaw) : {};
+                        const percent = getCompletion(statusObj);
+
+                        return (
+                            <div key={joiner.id} className="bg-white rounded shadow p-4">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="font-semibold">{joiner.name}</span>
+                                    <span
+                                        className={`px-2 py-1 rounded text-white text-xs ${
+                                            percent === 100
+                                                ? "bg-green-600"
+                                                : percent >= 50
+                                                ? "bg-yellow-500"
+                                                : "bg-red-500"
+                                        }`}
+                                    >
+                                        {percent}% Complete
+                                    </span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded h-4 mb-2">
+                                    <div
+                                        className="h-4 rounded"
+                                        style={{
+                                            width: `${percent}%`,
+                                            background:
+                                                percent === 100
+                                                    ? "#16a34a"
+                                                    : percent >= 50
+                                                    ? "#f59e42"
+                                                    : "#ef4444",
+                                            transition: "width 0.3s",
+                                        }}
+                                    />
+                                </div>
+                                {/* Optional: Show item statuses in a table */}
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th className="text-left py-1">Section</th>
+                                            <th className="text-left py-1">Item</th>
+                                            <th className="text-left py-1">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Object.entries(statusObj).map(([section, items]) =>
+                                            Object.entries(items).map(([item, status]) => (
+                                                <tr key={section + item}>
+                                                    <td className="py-1">{sectionTitles[section] || section}</td>
+                                                    <td className="py-1">{item}</td>
+                                                    <td className="py-1">
+                                                        <span
+                                                            className={`px-2 py-1 rounded text-xs text-white ${
+                                                                status === "Completed"
+                                                                    ? "bg-green-600"
+                                                                    : status === "In Progress"
+                                                                    ? "bg-yellow-500"
+                                                                    : "bg-gray-400"
+                                                            }`}
+                                                        >
+                                                            {status}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
