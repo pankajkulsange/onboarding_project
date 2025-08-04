@@ -20,8 +20,11 @@ const sectionTitles: { [key: string]: string } = {
   resources: "Resources",
 };
 
+const JOINER_ID = "newJoiner1";
+
 const ManagerPage = () => {
     const [sections, setSections] = useState<SectionData>(initialData);
+    const [emailSent, setEmailSent] = useState(false);
 
     const onDragEnd = (result: DropResult) => {
         const { source, destination } = result;
@@ -48,6 +51,32 @@ const ManagerPage = () => {
             [source.droppableId]: sourceList,
             [destination.droppableId]: destList,
         }));
+    };
+
+    // Save configuration to localStorage
+    const saveConfiguration = () => {
+        localStorage.setItem(
+            `joinerConfig-${JOINER_ID}`,
+            JSON.stringify(sections)
+        );
+    };
+
+    // Simulate sending welcome email
+    const sendWelcomeEmail = () => {
+        saveConfiguration();
+        setEmailSent(true);
+        const message = `
+Welcome to QA, ${JOINER_ID}!
+Your onboarding resources:
+Applications: ${sections.applications.join(", ")}
+Software: ${sections.software.join(", ")}
+Tools: ${sections.tools.join(", ")}
+Resources: ${sections.resources.join(", ")}
+Link: https://your-app-url.com/new-joiner
+        `;
+        // Simulate email send
+        console.log(message);
+        alert("Welcome email sent!\n\nCheck console for details.");
     };
 
     return (
@@ -89,6 +118,15 @@ const ManagerPage = () => {
                     ))}
                 </div>
             </DragDropContext>
+            <div className="mt-8 flex justify-center">
+                <button
+                    onClick={sendWelcomeEmail}
+                    className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+                    disabled={emailSent}
+                >
+                    {emailSent ? "Welcome Email Sent" : "Send Welcome Email"}
+                </button>
+            </div>
         </div>
     );
 };
