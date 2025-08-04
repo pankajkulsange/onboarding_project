@@ -1,0 +1,23 @@
+{
+  "name": "new-joiner-qa-portal",
+  "version": "1.0.0",
+  "description": "A web portal for new joiners in QA to track their onboarding process.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwindcss": "^2.2.19",
+    "postcss": "^8.4.5",
+    "autoprefixer": "^10.4.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  },
+  "license": "MIT"
+}
